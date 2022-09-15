@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ContractConfigResponse",
+  "type": "object",
+  "required": [
+    "admin",
+    "managing_token"
+  ],
+  "properties": {
+    "admin": {
+      "type": "string"
+    },
+    "managing_token": {
+      "type": "string"
+    }
+  }
+}

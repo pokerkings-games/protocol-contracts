@@ -1,0 +1,72 @@
+use terrapoker::mock_querier::{CustomDeps, custom_deps};
+use cosmwasm_std::{Env, MessageInfo, Response, Addr};
+use terrapoker::common::ContractResult;
+use crate::executions::update_config;
+use terrapoker::test_utils::expect_unauthorized_err;
+use crate::states::ContractConfig;
+use terrapoker::test_constants::community::{ADMIN1, community_env};
+use terrapoker::test_constants::governance::governance_sender;
+use terrapoker::test_constants::default_sender;
+
+pub fn exec(
+    deps: &mut CustomDeps,
+    env: Env,
+    info: MessageInfo,
+    admin: Option<String>,
+) -> ContractResult<Response> {
+    update_config(
+        deps.as_mut(),
+        env,
+        info,
+        admin,
+    )
+}
+
+pub fn will_success(
+    deps: &mut CustomDeps,
+    admin: Option<String>,
+) -> (Env, MessageInfo, Response) {
+    let env = community_env();
+    let info = governance_sender();
+
+    let response = exec(
+        deps,
+        env.clone(),
+        info.clone(),
+        admin,
+    ).unwrap();
+
+    (env, info, response)
+}
+
+#[test]
+fn succeed() {
+    let mut deps = custom_deps();
+
+    super::instantiate::default(&mut deps);
+
+    let admin = ADMIN1.to_string();
+
+    will_success(
+        &mut deps,
+        Some(admin.clone()),
+    );
+
+    let config = ContractConfig::load(&deps.storage).unwrap();
+    assert_eq!(config.admin, Addr::unchecked(admin));
+}
+
+#[test]
+fn failed_invalid_permission() {
+    let mut deps = custom_deps();
+
+    super::instantiate::default(&mut deps);
+
+    let result = exec(
+        &mut deps,
+        community_env(),
+        default_sender(),
+        None,
+    );
+    expect_unauthorized_err(&result);
+}

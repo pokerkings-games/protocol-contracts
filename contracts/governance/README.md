@@ -1,0 +1,3 @@
+# Terra Poker Governance
+The Gov Contract contains logic for holding polls and Terra Poker Token (TPT) staking, and allows the Terra Poker to be governed by its users in a decentralized manner.
+New proposals for change are submitted as polls, and are voted on by VKR stakers through the Poll Lifecycle. Polls can contain messages that can be executed directly without changing the Terra Poker code. xTPT will provide some benefits to governance stakers.
